@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const { connectDB } = require("./config/database");
 const { loginValidation } = require("./utils/validation");
@@ -29,6 +30,7 @@ app.use('/',requestAuth);
 app.use('/',userAuthh);
 
 // // Get user by email
+
 // app.get("/users", async (req, res) => {
 //   const email = req.body.emailId;
 //   try {
@@ -147,7 +149,7 @@ app.use('/',userAuthh);
 connectDB()
   .then(() => {
     console.log("Database Connection has been established");
-    app.listen(3000, () => {
+    app.listen(process.env.PORT, () => {
       console.log("App is listining to the port 3000");
     });
   })

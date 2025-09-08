@@ -3,14 +3,13 @@ const requestAuth = express.Router();
 const {userAuth} = require('../middlewares/adminAuth')
 const ConnectionRequest = require('../models/connectionRequestSchema');
 const User = require('../models/user');
+const sendEmail = require("../utils/sendEmail");
 
 requestAuth.post("/request/send/:status/:toUserId", userAuth, async (req, res) => {    
   try {
    const fromUserId = req.user._id;
    const toUserId  = req.params.toUserId;
    const status = req.params.status;
-
-  
    const allowedStatus = ["ignored","intrested"];
    if(!allowedStatus.includes(status))
    {
@@ -45,6 +44,12 @@ requestAuth.post("/request/send/:status/:toUserId", userAuth, async (req, res) =
    });
 
    const data = await connectionRequest.save();
+
+   const senResp = await sendEmail.run("A new friend request from " + req.user.firstName,
+    req.user.firstName + " is " + status + " in " + toUser.firstName
+   );
+
+   console.log("we got the email resp",senResp);
 
    res.json({
     message: "Connection Request has been sent Sucessfully",
